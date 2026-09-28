@@ -17,6 +17,7 @@ program lagranja {
 	keyboard.t().onPressDo( { personaje.plantar(trigo) } )
 	keyboard.o().onPressDo( { personaje.plantar(tomaco) } )
 	keyboard.r().onPressDo( { personaje.regar() } )
+	keyboard.c().onPressDo( { personaje.cosechar() } )
 
  	//  COMIENZA
 	game.start()

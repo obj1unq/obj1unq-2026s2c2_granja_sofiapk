@@ -38,6 +38,14 @@ object tomaco {
     method y() {
         return self.position().y()
     }
+
+    method estáListoParaSerCosechado() {
+        return true
+    }
+
+    method valor() {
+        return 80
+    }
 }
 
 // TRIGO
@@ -52,6 +60,14 @@ object trigo {
     method serRegado() {
         etapa = etapa.siguienteEtapa()
     }
+
+    method estáListoParaSerCosechado() {
+        return etapa.estáListoParaSerCosechado()
+    }
+
+    method valor() {
+        return etapa.valor()
+    }
 }
 
 object trigoEv0 {
@@ -61,6 +77,14 @@ object trigoEv0 {
 
     method siguienteEtapa() {
         return trigoEv1
+    }
+
+    method estáListoParaSerCosechado() {
+        return false
+    }
+
+    method valor() {
+        return 0
     }
 }
 
@@ -72,6 +96,14 @@ object trigoEv1 {
     method siguienteEtapa() {
         return trigoEv2
     }
+
+    method estáListoParaSerCosechado() {
+        return false
+    }
+
+    method valor() {
+        return 0
+    }
 }
 
 object trigoEv2 {
@@ -82,6 +114,14 @@ object trigoEv2 {
     method siguienteEtapa() {
         return trigoEv3
     }
+
+    method estáListoParaSerCosechado() {
+        return true
+    }
+
+    method valor() {
+        return 100
+    }
 }
 
 object trigoEv3 {
@@ -91,6 +131,14 @@ object trigoEv3 {
 
     method siguienteEtapa() {
         return trigoEv0
+    }
+
+    method estáListoParaSerCosechado() {
+        return true
+    }
+
+    method valor() {
+        return 200
     }
 }
 
@@ -106,16 +154,40 @@ object maíz {
     method serRegado() {
         estado = maízAdulto
     }
+
+    method estáListoParaSerCosechado() {
+        return estado.estáListoParaSerCosechado()
+    }
+
+    method valor() {
+        return estado.valor()
+    }
 }
 
 object maízBebé {
     method cuerpo() { 
         return "bebe"
     }
+
+    method estáListoParaSerCosechado() {
+        return false
+    }
+
+    method valor() {
+        return 150
+    }
 }
 
 object maízAdulto {
     method cuerpo() { 
         return "adulto"
+    }
+
+    method estáListoParaSerCosechado() {
+        return true
+    }
+
+    method valor() {
+        return 150
     }
 }

@@ -47,4 +47,31 @@ object personaje {
         propiedad.regarEn( self.position() )
     }
 	
+	method cosechar() {
+		propiedad.cosecharEn( self.position() )
+	}
+
+	method vender() {
+		propiedad.venderCosecha()
+	}
+
+	method mencionarInfoSobreVenta() {
+		game.say( self, self.mensaje() )
+	}
+
+	method mensaje() {
+		return "Tengo " + self.cantPlantasCosechadasParaVender().toString() + " plantas para vender por " + self.valorAObtenerPorVenta().toString() + " monedas"
+	}
+
+	method cantPlantasCosechadasParaVender() {
+		return propiedad.cantidadDePlantasCosechadas()
+	}
+
+	method valorAObtenerPorVenta() {
+		return propiedad.valorTotalPlantasCosechadas()
+	}
+
+	method text() {
+		return "Tengo " + propiedad.oroAcumulado().toString() + " de oro acumulado"
+	}
 }
