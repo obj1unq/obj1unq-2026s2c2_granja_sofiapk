@@ -1,9 +1,113 @@
 import wollok.game.*
 import granja.*
-describe "test de la granja" {
+import personaje.*
+import cultivos.*
 
+// PARTE 1
+describe "test personaje" {
+    test "personaje con género femenino" {
+        personaje.genero(femenino)
+        assert.equals( "f-player-normal.png", personaje.image() )
+    }
 
-    test "personaje" {
-        assert.that(true)
+    test "personaje con género femenino mira hacia abajo cuando está sobre algún elemento" {
+        personaje.genero(femenino)
+        personaje.position(game.at(0,0))
+        game.addVisual(tomaco)
+        assert.equals( "f-player-abajo.png", personaje.image() )
+    }
+
+    test "personaje con género masculino" {
+        personaje.genero(masculino)
+        assert.equals( "m-player-normal.png", personaje.image() )
+    }
+
+    test "personaje con género masculino mira hacia abajo cuando está sobre algún elemento" {
+        personaje.genero(masculino)
+        personaje.position( game.at(0,0) )
+        game.addVisual(tomaco)
+        assert.equals( "m-player-abajo.png", personaje.image() )
     }
 }
+
+describe "test de la granja" {
+    method initialize() {
+        //granja.cultivos.clear() es solo para listas!!
+        personaje.position(game.at(5,5))
+    }
+
+    test "personaje planta tomaco" {
+        personaje.plantar(tomaco)
+        assert.equals( game.at(5,5), tomaco.position() )
+        assert.that( granja.cultivos().contains(tomaco) )
+    }
+
+    test "personaje no puede plantar trigo porque ya hay otro cultivo en el espacio" {
+        personaje.plantar(tomaco)
+        assert.throwsException({ personaje.plantar(trigo) })
+    }
+
+    test "personaje no puede plantar tomaco porque ya está plantado entonces planta trigo" {
+        personaje.plantar(tomaco)
+        personaje.position(game.at(6,6))
+        assert.throwsException({ personaje.plantar(tomaco) })
+
+        personaje.plantar(trigo)
+        assert.equals( game.at(6,6), trigo.position() )
+
+        assert.that( granja.cultivos().contains(tomaco) )
+        assert.that( granja.cultivos().contains(trigo) )
+    }
+}
+
+// PARTE 2
+    describe "regar" {
+        method initialize() {
+            personaje.position(game.at(5,5))
+        }
+
+        test "sin cultivo" {
+            assert.throwsException( { personaje.regar() } )
+        }
+
+        test "regar maíz" {
+            personaje.plantar(maíz)
+            assert.equals( maízBebé, maíz.estado() )
+            personaje.regar()
+            assert.equals( maízAdulto, maíz.estado() )
+            personaje.regar()
+            assert.equals( maízAdulto, maíz.estado() )
+        }
+
+        test "regar trigo" {
+            personaje.plantar(trigo)
+            assert.equals( trigoEv0, trigo.etapa() )
+            personaje.regar()
+            assert.equals( trigoEv1, trigo.etapa() )
+            personaje.regar()
+            assert.equals( trigoEv2, trigo.etapa() )
+            personaje.regar()
+            assert.equals( trigoEv3, trigo.etapa() )
+            personaje.regar()
+            assert.equals( trigoEv0, trigo.etapa() )
+        }
+
+        test "regar tomaco" {
+            game.height(5)
+	        game.width(5)
+            personaje.position(game.at(3,3))
+            personaje.plantar(tomaco)
+            personaje.regar()
+            assert.equals( game.at(3,4), tomaco.position() )
+
+            personaje.position(game.at(3,4))
+            personaje.regar()
+            assert.equals( game.at(3,0), tomaco.position() )
+
+            personaje.position(game.at(3,1))
+            personaje.plantar(trigo)
+            personaje.position(game.at(3,0))
+            personaje.regar()
+            assert.equals( game.at(3,0), tomaco.position() )
+        }
+    }

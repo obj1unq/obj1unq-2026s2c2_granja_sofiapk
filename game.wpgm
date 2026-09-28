@@ -11,6 +11,12 @@ program lagranja {
 
  	game.addVisualCharacter(personaje)
  	
+	// TECLADO
+	keyboard.g().onPressDo( { personaje.cambiarGenero() } )
+	keyboard.m().onPressDo( { personaje.plantar(maíz) } )
+	keyboard.t().onPressDo( { personaje.plantar(trigo) } )
+	keyboard.o().onPressDo( { personaje.plantar(tomaco) } )
+	keyboard.r().onPressDo( { personaje.regar() } )
 
  	//  COMIENZA
 	game.start()
