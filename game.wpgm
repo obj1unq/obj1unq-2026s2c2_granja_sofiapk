@@ -1,16 +1,33 @@
 import wollok.game.*
 import personaje.*
 import cultivos.*
+import granja.*
+import direcciones.*
 
-program lagranja {
+program laGranja {
 	//  CONFIG	
 	game.title("La granja")
 	game.height(10)
 	game.width(10)
 	game.ground("fondo.png")
 
+	game.addVisual(mercado)
  	game.addVisualCharacter(personaje)
  	
+	// TECLADO
+	keyboard.left().onPressDo( { personaje.mover(izquierda) } )
+	keyboard.right().onPressDo( { personaje.mover(derecha) } )
+	keyboard.up().onPressDo( { personaje.mover(arriba) } )
+	keyboard.down().onPressDo( { personaje.mover(abajo) } )
+	keyboard.g().onPressDo( { personaje.cambiarGenero() } )
+	keyboard.m().onPressDo( { personaje.plantar( new Maíz( position = personaje.position() ) ) } )
+	keyboard.t().onPressDo( { personaje.plantar( new Trigo( position = personaje.position() ) ) } )
+	keyboard.o().onPressDo( { personaje.plantar( new Tomaco( position = personaje.position() ) ) } )
+	keyboard.r().onPressDo( { personaje.regar() } )
+	keyboard.c().onPressDo( { personaje.cosechar() } )
+	keyboard.space().onPressDo( { personaje.mencionarInfoSobreVenta() } )
+
+	game.onCollideDo(personaje, { objetoColisionado => objetoColisionado.interactuar(personaje) } )
 
  	//  COMIENZA
 	game.start()

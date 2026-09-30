@@ -1,9 +1,228 @@
 import wollok.game.*
 import granja.*
+import personaje.*
+import cultivos.*
+
+// PARTE 1
+describe "test personaje" {
+    test "personaje con género femenino" {
+        personaje.genero(femenino)
+        assert.equals( "f-player-normal.png", personaje.image() )
+    }
+
+    test "personaje con género femenino mira hacia abajo cuando está sobre algún elemento" {
+        personaje.genero(femenino)
+        personaje.position(game.at(1,2))
+        const maíz = new Maíz( position = personaje.position() )
+        game.addVisual(personaje)
+        game.addVisual(maíz)
+        assert.equals( "f-player-abajo.png", personaje.image() )
+    }
+
+    test "personaje con género masculino" {
+        personaje.genero(masculino)
+        assert.equals( "m-player-normal.png", personaje.image() )
+    }
+
+    test "personaje con género masculino mira hacia abajo cuando está sobre algún elemento" {
+        personaje.genero(masculino)
+        personaje.position(game.at(1,2))
+        const maíz = new Maíz( position = personaje.position() )
+        game.addVisual(personaje)
+        game.addVisual(maíz)
+        assert.equals( "m-player-abajo.png", personaje.image() )
+    }
+}
+
 describe "test de la granja" {
+    const tomaco = new Tomaco()
+    const trigo = new Trigo()
 
+    method initialize() {
+        //granja.cultivos.clear() es solo para listas!!
+        personaje.position(game.at(5,5))
+    }
 
-    test "personaje" {
-        assert.that(true)
+    test "personaje planta tomaco" {
+        personaje.plantar(tomaco)
+        assert.equals( game.at(5,5), tomaco.position() )
+        assert.that( granja.cultivos().contains(tomaco) )
+    }
+
+    test "personaje no puede plantar trigo porque ya hay otro cultivo en el espacio" {
+        personaje.plantar(tomaco)
+        assert.throwsException({ personaje.plantar(trigo) })
+    }
+
+    test "personaje no puede plantar tomaco porque ya está plantado entonces planta trigo" {
+        personaje.plantar(tomaco)
+        personaje.position(game.at(6,6))
+        assert.throwsException({ personaje.plantar(tomaco) })
+
+        personaje.plantar(trigo)
+        assert.equals( game.at(6,6), trigo.position() )
+
+        assert.that( granja.cultivos().contains(tomaco) )
+        assert.that( granja.cultivos().contains(trigo) )
+    }
+}
+
+// PARTE 2
+describe "regar" {
+    const maíz = new Maíz()
+    const tomaco = new Tomaco()
+    const trigo = new Trigo()
+
+    method initialize() {
+        personaje.position(game.at(5,5))
+    }
+
+    test "sin cultivo" {
+        assert.throwsException( { personaje.regar() } )
+    }
+
+    test "regar maíz" {
+        personaje.plantar(maíz)
+        assert.equals( maízBebé, maíz.estado() )
+        personaje.regar()
+        assert.equals( maízAdulto, maíz.estado() )
+        personaje.regar()
+        assert.equals( maízAdulto, maíz.estado() )
+    }
+
+    test "regar trigo" {
+        personaje.plantar(trigo)
+        assert.equals( trigoEv0, trigo.etapa() )
+        personaje.regar()
+        assert.equals( trigoEv1, trigo.etapa() )
+        personaje.regar()
+        assert.equals( trigoEv2, trigo.etapa() )
+        personaje.regar()
+        assert.equals( trigoEv3, trigo.etapa() )
+        personaje.regar()
+        assert.equals( trigoEv0, trigo.etapa() )
+    }
+
+    test "regar tomaco" {
+        game.height(5)
+        game.width(5)
+        personaje.position(game.at(3,3))
+        personaje.plantar(tomaco)
+        personaje.regar()
+        assert.equals( game.at(3,4), tomaco.position() )
+
+        personaje.position(game.at(3,4))
+        personaje.regar()
+        assert.equals( game.at(3,0), tomaco.position() )
+
+        personaje.position(game.at(3,1))
+        personaje.plantar(trigo)
+        personaje.position(game.at(3,0))
+        personaje.regar()
+        assert.equals( game.at(3,0), tomaco.position() )
+    }
+}
+// PARTE 3
+describe "cosechar" {
+    const maíz = new Maíz()
+    const tomaco = new Tomaco()
+    const trigo = new Trigo()
+
+    method initialize() {
+        personaje.position(game.at(3,3))
+    }
+
+    test "cosechar sin cultivo" {
+        assert.throwsException( { personaje.cosechar() } )
+    }
+
+    test "cosechar cultivos" {
+        personaje.plantar(tomaco)
+        personaje.cosechar()
+        assert.notThat( granja.cultivos().contains(tomaco) )
+        assert.that( granja.plantasCosechadas().contains(tomaco) )
+    
+        personaje.plantar(maíz)
+        assert.throwsException({ personaje.cosechar() })
+
+        personaje.regar()
+        personaje.cosechar()
+        assert.that( granja.plantasCosechadas().contains(maíz) )
+        assert.that( granja.plantasCosechadas().contains(tomaco) )
+        assert.that( granja.cultivos().isEmpty() )
+
+        personaje.plantar(trigo)
+        assert.throwsException({ personaje.cosechar() })
+        personaje.regar()
+        assert.throwsException({ personaje.cosechar() })
+        personaje.regar()
+        assert.that( trigo.estáListoParaSerCosechado() )
+        personaje.regar()
+        personaje.cosechar()
+        assert.that( granja.cultivos().isEmpty() )
+        assert.that( granja.plantasCosechadas().contains(maíz) )
+        assert.that( granja.plantasCosechadas().contains(tomaco) )
+        assert.that( granja.plantasCosechadas().contains(trigo) )
+    }
+}
+
+// PARTE 4
+describe "vender" {
+    const maíz = new Maíz()
+    const tomaco = new Tomaco()
+    const trigo = new Trigo()
+
+    method initialize() {
+        personaje.position( game.at(4, 7) )  
+    }
+
+    test "vender tomaco" {
+        personaje.plantar(tomaco)
+        personaje.cosechar()
+        assert.equals( 80, personaje.valorAObtenerPorVenta() )
+        personaje.vender()
+        assert.equals( 80, granja.oroAcumulado() )
+        assert.equals( 0, personaje.cantPlantasCosechadasParaVender() )
+    }
+
+    test "vender maíz" {
+        personaje.plantar(maíz)
+        personaje.regar()
+        personaje.cosechar()
+        assert.equals( 150, personaje.valorAObtenerPorVenta() )
+        personaje.vender()
+        assert.equals( 150, granja.oroAcumulado() )
+        assert.equals( 0, personaje.cantPlantasCosechadasParaVender() )
+    }
+
+    test "vender trigo" {
+        personaje.plantar(trigo)
+        personaje.regar()
+        personaje.regar()
+        personaje.cosechar()
+        assert.equals( 100, personaje.valorAObtenerPorVenta() )
+        personaje.vender()
+        assert.equals( 100, granja.oroAcumulado() )
+        assert.equals( 0, personaje.cantPlantasCosechadasParaVender() )
+    }
+
+    test "vender trigo y maíz" {
+        personaje.plantar(trigo)
+        personaje.regar()
+        personaje.regar()
+        personaje.regar()
+        personaje.cosechar()
+        assert.equals( 200, personaje.valorAObtenerPorVenta() )
+        assert.equals( 1, personaje.cantPlantasCosechadasParaVender() )
+        
+        personaje.plantar(maíz)
+        personaje.regar()
+        personaje.cosechar()
+        assert.equals( 350, personaje.valorAObtenerPorVenta() )
+        assert.equals( 2, personaje.cantPlantasCosechadasParaVender() )
+
+        personaje.vender()
+        assert.equals( 350, granja.oroAcumulado() )
+        assert.equals( 0, personaje.cantPlantasCosechadasParaVender() )
     }
 }
