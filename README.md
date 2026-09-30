@@ -206,3 +206,7 @@ Modificar la validación al sembrar. Esto impacta también en el movimiento del 
 
 Si elegís esta opción, tenés que tener cuidado con la colisión, ya que el mercado puede colisionar con el personaje, pero también con un tomaco u otros cultivos.
 
+### Ejercicio adicional:
+El objetivo de este ejercicio es extender el ejercicio de La Granja para permitir sembrar simultáneamente muchos cultivos del mismo tipo. Por ejemplo, sembrar en distintas posiciones 2 plantas de tomaco, 3 plantas de maíz, 4 plantas de trigo.
+
+Tip: Cambiar un modelo de objetos autodefinidos para los cultivos a un modelo basado en instancias de clases.

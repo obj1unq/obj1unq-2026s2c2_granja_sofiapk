@@ -1,6 +1,7 @@
 import wollok.game.*
 import granja.*
 import cultivos.*
+import direcciones.*
 
 object femenino{
 	method prefijo() {
@@ -74,4 +75,12 @@ object personaje {
 	method text() {
 		return "Tengo " + propiedad.oroAcumulado().toString() + " de oro acumulado"
 	}
+
+	method mover(direccion) {
+        position = direccion.siguiente(position)
+    }
+
+ 	method interactuar() {
+   		game.colliders(self).forEach( { algo => algo.interactuar(self) } )
+ 	}
 }

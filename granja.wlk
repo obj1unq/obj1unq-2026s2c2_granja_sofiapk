@@ -1,9 +1,14 @@
 import wollok.game.*
 import cultivos.*
+import personaje.*
 
 object mercado {
-	const property position = game.at(5,5)
+	const property position = game.at(3,2)
 	const property image = "mercado.png"
+
+	method interactuar(personaje) {
+        personaje.vender()
+    }
 }
 
 object granja {
@@ -23,7 +28,11 @@ object granja {
 		}
 	}
 	method puedePlantar(cultivo, position) {
-		return not cultivos.contains(cultivo) and not self.hayCultivo(position)
+		return not cultivos.contains(cultivo) and self.parcelaDisponible(position)
+	}
+
+	method parcelaDisponible(position) {
+		return not self.hayCultivo(position) and position != mercado.position()
 	}
 	method hayCultivo(position) {
 		return cultivos.any( {cultivo => cultivo.position() == position} )
@@ -54,7 +63,7 @@ object granja {
 	}
 
 	method validarCosechar(position) {
-		if ( not self.hayCultivo(position) || self.cultivoEstáListoParaCosechar(position) ){
+		if ( not self.hayCultivo(position) || not self.cultivoEstáListoParaCosechar(position) ){
 			self.error("Aún no se puede cosechar")
 		}
 	}

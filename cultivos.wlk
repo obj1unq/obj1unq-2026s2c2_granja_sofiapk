@@ -2,7 +2,7 @@ import wollok.game.*
 import granja.*
 
 // TOMACO
-object tomaco {
+class Tomaco {
     var property position = game.origin()
 
     method image() {
@@ -10,7 +10,7 @@ object tomaco {
     }
 
     method serRegado() { 
-        if ( not granja.hayCultivo( self.posicionCeldaObjetivo() ) ){
+        if ( granja.parcelaDisponible( self.posicionCeldaObjetivo() ) ){
             position = self.posicionCeldaObjetivo()
         }
     }
@@ -46,10 +46,14 @@ object tomaco {
     method valor() {
         return 80
     }
+
+    method interactuar(personaje) {
+
+    }
 }
 
 // TRIGO
-object trigo {
+class Trigo {
     var property position = game.origin()
     var property etapa = trigoEv0
     
@@ -67,6 +71,10 @@ object trigo {
 
     method valor() {
         return etapa.valor()
+    }
+
+    method interactuar(personaje) {
+        
     }
 }
 
@@ -143,7 +151,7 @@ object trigoEv3 {
 }
 
 // MAIZ 
-object maíz {
+class Maíz {
     var property position = game.origin()
     var property estado = maízBebé
 
@@ -161,6 +169,10 @@ object maíz {
 
     method valor() {
         return estado.valor()
+    }
+
+    method interactuar(personaje) {
+        
     }
 }
 
